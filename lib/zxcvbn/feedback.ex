@@ -6,7 +6,7 @@ defmodule Zxcvbn.Feedback do
   @default_feedback %{
     warning: '',
     suggestions: [
-      "Use a few words, avoid common phrases"
+      "Use a few words, avoid common phrases",
       "No need for symbols, digits, or uppercase letters"
     ]
   }

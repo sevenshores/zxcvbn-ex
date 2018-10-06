@@ -6,10 +6,6 @@ defmodule Zxcvbn.Matching do
   @adjacency_graphs Zxcvbn.AdjacencyGraphs.all()
   @frequency_lists Zxcvbn.FrequencyLists.all()
 
-  @ranked_dictionaries Enum.map(@frequency_lists, fn {k, v} ->
-    {k, build_ranked_dict(v)}
-  end)
-
   @graphs %{
     qwerty: @adjacency_graphs.qwerty,
     dvorak: @adjacency_graphs.dvorak,
@@ -32,35 +28,35 @@ defmodule Zxcvbn.Matching do
     z: ["2"]
   }
 
-  @regexen %{recent_year: ~r/19\d\d|200\d|201\d/g}
+  @regexen %{recent_year: ~r/19\d\d|200\d|201\d/}
 
   @date_max_year 2050
   @date_min_year 1000
   @date_splits %{
-    4: [      # for length-4 strings, eg 1191 or 9111, two ways to split:
+    4 => [    # for length-4 strings, eg 1191 or 9111, two ways to split:
       [1, 2], # 1 1 91 (2nd split starts at index 1, 3rd at index 2)
       [2, 3]  # 91 1 1
     ],
-    5: [
+    5 => [
       [1, 3], # 1 11 91
       [2, 3]  # 11 1 91
     ],
-    6: [
+    6 => [
       [1, 2], # 1 1 1991
       [2, 4], # 11 11 91
       [4, 5]  # 1991 1 1
     ],
-    7: [
+    7 => [
       [1, 3], # 1 11 1991
       [2, 3], # 11 1 1991
       [4, 5], # 1991 1 11
       [4, 6]  # 1991 11 1
     ],
-    8: [
+    8 => [
       [2, 4], # 11 11 1991
       [4, 6]  # 1991 11 11
-      ]
-  }]
+    ]
+  }
 
   @shifted_rx ~r/[~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:"ZXCVBNM<>?]/
 
@@ -618,6 +614,12 @@ defmodule Zxcvbn.Matching do
       year > 50 -> year + 1900 # 87 -> 1987
       true -> year + 2000 # 15 -> 2015
     end
+  end
+
+  defp ranked_dictionaries do
+    Enum.map(@frequency_lists, fn {k, v} ->
+      {k, build_ranked_dict(v)}
+    end)
   end
 
   defp build_ranked_dict(ordered_list) do
