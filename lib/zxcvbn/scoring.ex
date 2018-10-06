@@ -1,8 +1,6 @@
 defmodule Zxcvbn.Scoring do
   @moduledoc false
 
-  @adjacency_graphs Zxcvbn.AdjacencyGraphs.all()
-
   @bruteforce_cardinality 10
   @min_guesses_before_growing_sequence 10_000
   @min_submatch_guesses_single_char 10
@@ -11,9 +9,6 @@ defmodule Zxcvbn.Scoring do
   # Used in regex and date guesses
   @min_year_space 20
   @reference_year Date.utc_today().year
-
-  @keyboard_starting_positions Enum.count(@adjacency_graphs.qwerty)
-  @keypad_starting_positions Enum.count(@adjacency_graphs.keypad)
 
   # Used in variations
   @start_upper ~r/^[A-Z][^A-Z]+$/
@@ -272,8 +267,8 @@ defmodule Zxcvbn.Scoring do
     #   s = @KEYBOARD_STARTING_POSITIONS
     #   d = @KEYBOARD_AVERAGE_DEGREE
     # else
-    #   s = @KEYPAD_STARTING_POSITIONS
-    #   d = @KEYPAD_AVERAGE_DEGREE
+    #   s = keypad_starting_positions()
+    #   d = keypad_average_degree()
     # guesses = 0
     # L = match.token.length
     # t = match.turns
@@ -349,11 +344,17 @@ defmodule Zxcvbn.Scoring do
 
   ## Helpers
 
+  defp adjacency_graphs, do: Zxcvbn.Data.AdjacencyGraphs.all()
+
+  defp keyboard_starting_positions, do: Enum.count(adjacency_graphs().qwerty)
+
+  defp keypad_starting_positions, do: Enum.count(adjacency_graphs().keypad)
+
   # Used in spatial guesses
-  def keyboard_average_degree, do: calc_average_degree(@adjacency_graphs.qwerty)
+  def keyboard_average_degree, do: calc_average_degree(adjacency_graphs().qwerty)
 
   # slightly different for keypad/mac keypad, but close enough
-  def keypad_average_degree, do: calc_average_degree(@adjacency_graphs.keypad)
+  def keypad_average_degree, do: calc_average_degree(adjacency_graphs().keypad)
 
   # On qwerty, 'g' has degree 6, being adjacent to 'ftyhbv'. '\' has degree 1.
   # this calculates the average over all keys.

@@ -1,4 +1,4 @@
-defmodule Zxcvbn.DataParser do
+defmodule Zxcvbn.Data.Parser do
   @moduledoc false
 
   def parse_data_file(filename) do

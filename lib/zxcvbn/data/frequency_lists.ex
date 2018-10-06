@@ -1,14 +1,14 @@
-defmodule Zxcvbn.FrequencyLists do
+defmodule Zxcvbn.Data.FrequencyLists do
   @moduledoc false
 
-  alias Zxcvbn.DataParser
+  import Zxcvbn.Data.Parser
 
-  @english_wikipedia DataParser.parse_data_file("english_wikipedia.txt")
-  @female_names DataParser.parse_data_file("female_names.txt")
-  @male_names DataParser.parse_data_file("male_names.txt")
-  @passwords DataParser.parse_data_file("passwords.txt")
-  @surnames DataParser.parse_data_file("surnames.txt")
-  @us_tv_and_film DataParser.parse_data_file("us_tv_and_film.txt")
+  @english_wikipedia parse_data_file("english_wikipedia.txt")
+  @female_names parse_data_file("female_names.txt")
+  @male_names parse_data_file("male_names.txt")
+  @passwords parse_data_file("passwords.txt")
+  @surnames parse_data_file("surnames.txt")
+  @us_tv_and_film parse_data_file("us_tv_and_film.txt")
 
   def all do
     %{
