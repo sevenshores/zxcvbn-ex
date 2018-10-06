@@ -23,28 +23,42 @@ defmodule Zxcvbn.Matching do
   @date_max_year 2050
   @date_min_year 1000
   @date_splits %{
-    4 => [    # for length-4 strings, eg 1191 or 9111, two ways to split:
-      [1, 2], # 1 1 91 (2nd split starts at index 1, 3rd at index 2)
-      [2, 3]  # 91 1 1
+    # for length-4 strings, eg 1191 or 9111, two ways to split:
+    4 => [
+      # 1 1 91 (2nd split starts at index 1, 3rd at index 2)
+      [1, 2],
+      # 91 1 1
+      [2, 3]
     ],
     5 => [
-      [1, 3], # 1 11 91
-      [2, 3]  # 11 1 91
+      # 1 11 91
+      [1, 3],
+      # 11 1 91
+      [2, 3]
     ],
     6 => [
-      [1, 2], # 1 1 1991
-      [2, 4], # 11 11 91
-      [4, 5]  # 1991 1 1
+      # 1 1 1991
+      [1, 2],
+      # 11 11 91
+      [2, 4],
+      # 1991 1 1
+      [4, 5]
     ],
     7 => [
-      [1, 3], # 1 11 1991
-      [2, 3], # 11 1 1991
-      [4, 5], # 1991 1 11
-      [4, 6]  # 1991 11 1
+      # 1 11 1991
+      [1, 3],
+      # 11 1 1991
+      [2, 3],
+      # 1991 1 11
+      [4, 5],
+      # 1991 11 1
+      [4, 6]
     ],
     8 => [
-      [2, 4], # 11 11 1991
-      [4, 6]  # 1991 11 11
+      # 11 11 1991
+      [2, 4],
+      # 1991 11 11
+      [4, 6]
     ]
   }
 
@@ -601,8 +615,10 @@ defmodule Zxcvbn.Matching do
   defp two_to_four_digit_year(year) do
     cond do
       year > 99 -> year
-      year > 50 -> year + 1900 # 87 -> 1987
-      true -> year + 2000 # 15 -> 2015
+      # 87 -> 1987
+      year > 50 -> year + 1900
+      # 15 -> 2015
+      true -> year + 2000
     end
   end
 

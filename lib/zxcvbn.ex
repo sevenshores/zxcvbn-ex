@@ -14,10 +14,12 @@ defmodule Zxcvbn do
   ## Examples
 
       iex> Zxcvbn.check("password123")
-      "noooo!"
+      0
 
   """
   def check(password, user_inputs \\ []) when is_binary(password) when is_list(user_inputs) do
+    0
+
     # start = (new Date()).getTime()
 
     # # reset the user inputs matcher on a per-request basis to keep things stateless
