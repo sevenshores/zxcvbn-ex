@@ -3,16 +3,6 @@ defmodule Zxcvbn.Matching do
 
   alias Zxcvbn.Scoring
 
-  @adjacency_graphs Zxcvbn.AdjacencyGraphs.all()
-  @frequency_lists Zxcvbn.FrequencyLists.all()
-
-  @graphs %{
-    qwerty: @adjacency_graphs.qwerty,
-    dvorak: @adjacency_graphs.dvorak,
-    keypad: @adjacency_graphs.keypad,
-    mac_keypad: @adjacency_graphs.mac_keypad
-  }
-
   @l33t_table %{
     a: ["4", "@"],
     b: ["8"],
@@ -161,7 +151,7 @@ defmodule Zxcvbn.Matching do
   @doc """
   Spatial match (qwerty/dvorak/keypad).
   """
-  def spatial_match(password, graph \\ @graphs) do
+  def spatial_match(password, graph \\ graphs()) do
     # matches = []
     # for graph_name, graph of _graphs
     #   @extend matches, @spatial_match_helper(password, graph, graph_name)
@@ -617,7 +607,7 @@ defmodule Zxcvbn.Matching do
   end
 
   defp ranked_dictionaries do
-    Enum.map(@frequency_lists, fn {k, v} ->
+    Enum.map(frequency_lists(), fn {k, v} ->
       {k, build_ranked_dict(v)}
     end)
   end
@@ -652,4 +642,8 @@ defmodule Zxcvbn.Matching do
     # matches.sort (m1, m2) ->
     #   (m1.i - m2.i) or (m1.j - m2.j)
   end
+
+  defp frequency_lists, do: Zxcvbn.Data.FrequencyLists.all()
+
+  defp graphs, do: Zxcvbn.Data.AdjacencyGraphs.all()
 end
