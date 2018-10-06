@@ -1,4 +1,5 @@
 # zxcvbn elixir
+[![Build Status](https://travis-ci.org/sevenshores/zxcvbn-ex.svg?branch=master)](https://travis-ci.org/sevenshores/zxcvbn-ex)
 
 A port of the [`zxcvbn`](https://github.com/dropbox/zxcvbn) library for Elixir.
 
