@@ -1,6 +1,6 @@
-# Zxcvbn
+# zxcvbn elixir
 
-**TODO: Add description**
+A port of the [`zxcvbn`](https://github.com/dropbox/zxcvbn) library for Elixir.
 
 ## Installation
 
