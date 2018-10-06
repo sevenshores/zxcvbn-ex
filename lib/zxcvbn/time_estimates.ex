@@ -22,14 +22,14 @@ defmodule Zxcvbn.TimeEstimates do
   def guesses_to_score(guesses) do
     cond do
       # risky password: "too guessable"
-      guesses < 1e3 + @delta -> 0
+      guesses < 1.0e3 + @delta -> 0
       # modest protection from throttled online attacks: "very guessable"
-      guesses < 1e6 + @delta -> 1
+      guesses < 1.0e6 + @delta -> 1
       # modest protection from unthrottled online attacks: "somewhat guessable"
-      guesses < 1e8 + @delta -> 2
+      guesses < 1.0e8 + @delta -> 2
       # modest protection from offline attacks: "safely unguessable"
       # assuming a salted, slow hash function like bcrypt, scrypt, PBKDF2, argon, etc
-      guesses < 1e10 + @delta -> 3
+      guesses < 1.0e10 + @delta -> 3
       # strong protection from offline attacks under same scenario: "very unguessable"
       true -> 4
     end
