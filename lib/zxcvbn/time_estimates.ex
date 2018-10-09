@@ -5,10 +5,10 @@ defmodule Zxcvbn.TimeEstimates do
   @second 1
   @minute 60
   @hour 3600
-  @day 86400
-  @month 2678400
-  @year 31536000
-  @century 3153600000
+  @day 86_400
+  @month 2_678_400
+  @year 31_536_000
+  @century 3_153_600_000
 
   def estimate_attack_times(guesses) do
     # crack_times_seconds =
@@ -42,10 +42,14 @@ defmodule Zxcvbn.TimeEstimates do
     end
   end
 
-  def display_time(seconds) when is_number(seconds) and seconds < @second, do: "less than a second"
+  def display_time(seconds) when is_number(seconds) and seconds < @second,
+    do: "less than a second"
+
   def display_time(seconds) when is_number(seconds) and seconds > @century, do: "centuries"
 
-  def display_time(seconds) when seconds < @minute, do: {trunc(seconds), "second"} |> tuple_to_desc
+  def display_time(seconds) when seconds < @minute,
+    do: {trunc(seconds), "second"} |> tuple_to_desc
+
   def display_time(seconds) when seconds < @hour, do: seconds |> to_desc(@minute, "minute")
   def display_time(seconds) when seconds < @day, do: seconds |> to_desc(@hour, "hour")
   def display_time(seconds) when seconds < @month, do: seconds |> to_desc(@day, "day")
@@ -59,5 +63,4 @@ defmodule Zxcvbn.TimeEstimates do
 
   defp tuple_to_desc({1, desc}), do: "1 #{desc}"
   defp tuple_to_desc({base, desc}), do: "#{base} #{desc}s"
-
 end
