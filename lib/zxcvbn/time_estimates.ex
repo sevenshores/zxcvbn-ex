@@ -2,6 +2,13 @@ defmodule Zxcvbn.TimeEstimates do
   @moduledoc false
 
   @delta 5
+  @second 1
+  @minute 60
+  @hour 3600
+  @day 86400
+  @month 2678400
+  @year 31536000
+  @century 3153600000
 
   def estimate_attack_times(guesses) do
     # crack_times_seconds =
@@ -35,36 +42,22 @@ defmodule Zxcvbn.TimeEstimates do
     end
   end
 
-  def display_time(seconds) do
-    # minute = 60
-    # hour = minute * 60
-    # day = hour * 24
-    # month = day * 31
-    # year = month * 12
-    # century = year * 100
-    # [display_num, display_str] = if seconds < 1
-    #   [null, 'less than a second']
-    # else if seconds < minute
-    #   base = Math.round seconds
-    #   [base, "#{base} second"]
-    # else if seconds < hour
-    #   base = Math.round seconds / minute
-    #   [base, "#{base} minute"]
-    # else if seconds < day
-    #   base = Math.round seconds / hour
-    #   [base, "#{base} hour"]
-    # else if seconds < month
-    #   base = Math.round seconds / day
-    #   [base, "#{base} day"]
-    # else if seconds < year
-    #   base = Math.round seconds / month
-    #   [base, "#{base} month"]
-    # else if seconds < century
-    #   base = Math.round seconds / year
-    #   [base, "#{base} year"]
-    # else
-    #   [null, 'centuries']
-    # display_str += 's' if display_num? and display_num != 1
-    # display_str
+  def display_time(seconds) when is_number(seconds) and seconds < @second, do: "less than a second"
+  def display_time(seconds) when is_number(seconds) and seconds > @century, do: "centuries"
+
+  def display_time(seconds) when seconds < @minute, do: {trunc(seconds), "second"} |> tuple_to_desc
+  def display_time(seconds) when seconds < @hour, do: seconds |> to_desc(@minute, "minute")
+  def display_time(seconds) when seconds < @day, do: seconds |> to_desc(@hour, "hour")
+  def display_time(seconds) when seconds < @month, do: seconds |> to_desc(@day, "day")
+  def display_time(seconds) when seconds < @year, do: seconds |> to_desc(@month, "month")
+  def display_time(seconds) when seconds <= @century, do: seconds |> to_desc(@year, "year")
+
+  defp to_desc(seconds, divider, desc) do
+    base = seconds |> div(divider) |> trunc
+    {base, desc} |> tuple_to_desc
   end
+
+  defp tuple_to_desc({1, desc}), do: "1 #{desc}"
+  defp tuple_to_desc({base, desc}), do: "#{base} #{desc}s"
+
 end
