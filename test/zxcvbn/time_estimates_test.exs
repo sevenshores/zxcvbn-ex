@@ -4,7 +4,7 @@ defmodule Zxcvbn.TimeEstimatesTest do
 
   test "outliers" do
     assert 0.56 |> TimeEstimates.display_time() == "less than a second"
-    assert 1.0e10 |> TimeEstimates.display_time() == "centuries"
+    assert 3_153_600_001 |> TimeEstimates.display_time() == "centuries"
   end
 
   test "anything between 1 second and several years" do
@@ -41,5 +41,14 @@ defmodule Zxcvbn.TimeEstimatesTest do
 
     year = 365 * 24 * 60 * 60
     assert year |> TimeEstimates.display_time() == "1 year"
+
+    century = 100 * 365 * 24 * 60 * 60
+    assert century |> TimeEstimates.display_time() == "1 century"
+  end
+
+  test "float input is allowed" do
+    assert 0.45 |> TimeEstimates.display_time() == "less than a second"
+    assert 3_153_600_000.0 |> TimeEstimates.display_time() == "1 century"
+    assert 60.0 |> TimeEstimates.display_time() == "1 minute"
   end
 end

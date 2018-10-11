@@ -45,7 +45,11 @@ defmodule Zxcvbn.TimeEstimates do
   def display_time(seconds) when is_number(seconds) and seconds < @second,
     do: "less than a second"
 
-  def display_time(seconds) when is_number(seconds) and seconds > @century, do: "centuries"
+  def display_time(seconds) when is_number(seconds) and seconds > @century,
+    do: "centuries"
+
+  def display_time(@century), do: "1 century"
+  def display_time(3_153_600_000.0), do: "1 century"
 
   def display_time(seconds) when seconds < @minute,
     do: {trunc(seconds), "second"} |> tuple_to_desc
@@ -54,11 +58,11 @@ defmodule Zxcvbn.TimeEstimates do
   def display_time(seconds) when seconds < @day, do: seconds |> to_desc(@hour, "hour")
   def display_time(seconds) when seconds < @month, do: seconds |> to_desc(@day, "day")
   def display_time(seconds) when seconds < @year, do: seconds |> to_desc(@month, "month")
-  def display_time(seconds) when seconds <= @century, do: seconds |> to_desc(@year, "year")
+  def display_time(seconds) when seconds < @century, do: seconds |> to_desc(@year, "year")
 
   defp to_desc(seconds, divider, desc) do
-    base = seconds |> div(divider) |> trunc
-    {base, desc} |> tuple_to_desc
+    base = seconds / divider
+    {trunc(base), desc} |> tuple_to_desc
   end
 
   defp tuple_to_desc({1, desc}), do: "1 #{desc}"
