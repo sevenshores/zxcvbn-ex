@@ -9,6 +9,7 @@ otp_release:
 script:
   - mix deps.compile
   - mix compile
+  - MIX_ENV=test mix compile
   - mix format --check-formatted
   - mix credo
   - mix test
