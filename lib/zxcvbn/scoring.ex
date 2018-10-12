@@ -366,12 +366,12 @@ defmodule Zxcvbn.Scoring do
     # average
   end
 
-  def nCk(n, k) when n>=0 and k>=0 do
-    if k==0, do: 1, else: nCk(n, k, 1, 1)
+  def nCk(n, k) when n >= 0 and k >= 0 do
+    if k == 0, do: 1, else: nCk(n, k, 1, 1)
   end
 
-  defp nCk(n, k, k, acc), do: div(acc*(n-k+1), k)
-  defp nCk(n, k, i, acc), do: nCk(n, k, i+1, div(acc*(n-i+1), i))
+  defp nCk(n, k, k, acc), do: div(acc * (n - k + 1), k)
+  defp nCk(n, k, i, acc), do: nCk(n, k, i + 1, div(acc * (n - i + 1), i))
 
   defp log10(n) do
     # Math.log(n) / Math.log(10) # IE doesn't support Math.log10 :(
