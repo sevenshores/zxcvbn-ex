@@ -11,19 +11,25 @@ defmodule Zxcvbn.TimeEstimates do
   @century 3_153_600_000
 
   def estimate_attack_times(guesses) do
-    # crack_times_seconds =
-    #   online_throttling_100_per_hour: guesses / (100 / 3600)
-    #   online_no_throttling_10_per_second: guesses / 10
-    #   offline_slow_hashing_1e4_per_second: guesses / 1e4
-    #   offline_fast_hashing_1e10_per_second: guesses / 1e10
+    crack_times_seconds = %{
+      online_throttling_100_per_hour: guesses / 100 / 3600,
+      online_no_throttling_10_per_second: guesses / 10,
+      offline_slow_hashing_1e4_per_second: guesses / 1.0e4,
+      offline_fast_hashing_1e10_per_second: guesses / 1.0e10
+    }
 
-    # crack_times_display = {}
-    # for scenario, seconds of crack_times_seconds
-    #   crack_times_display[scenario] = display_time(seconds)
+    crack_times_display =
+      crack_times_seconds
+      |> Map.keys()
+      |> Enum.reduce(%{}, fn key, acc ->
+        Map.update(acc, key, display_time(crack_times_seconds[key]), & &1)
+      end)
 
-    # crack_times_seconds: crack_times_seconds
-    # crack_times_display: crack_times_display
-    # score: guesses_to_score(guesses)
+    %{
+      crack_times_seconds: crack_times_seconds,
+      crack_times_display: crack_times_display,
+      score: guesses_to_score(guesses)
+    }
   end
 
   def guesses_to_score(guesses) do
@@ -45,7 +51,11 @@ defmodule Zxcvbn.TimeEstimates do
   def display_time(seconds) when is_number(seconds) and seconds < @second,
     do: "less than a second"
 
-  def display_time(seconds) when is_number(seconds) and seconds > @century, do: "centuries"
+  def display_time(seconds) when is_number(seconds) and seconds > @century,
+    do: "centuries"
+
+  def display_time(@century), do: "1 century"
+  def display_time(3_153_600_000.0), do: "1 century"
 
   def display_time(seconds) when seconds < @minute,
     do: {trunc(seconds), "second"} |> tuple_to_desc
@@ -54,11 +64,11 @@ defmodule Zxcvbn.TimeEstimates do
   def display_time(seconds) when seconds < @day, do: seconds |> to_desc(@hour, "hour")
   def display_time(seconds) when seconds < @month, do: seconds |> to_desc(@day, "day")
   def display_time(seconds) when seconds < @year, do: seconds |> to_desc(@month, "month")
-  def display_time(seconds) when seconds <= @century, do: seconds |> to_desc(@year, "year")
+  def display_time(seconds) when seconds < @century, do: seconds |> to_desc(@year, "year")
 
   defp to_desc(seconds, divider, desc) do
-    base = seconds |> div(divider) |> trunc
-    {base, desc} |> tuple_to_desc
+    base = seconds / divider
+    {trunc(base), desc} |> tuple_to_desc
   end
 
   defp tuple_to_desc({1, desc}), do: "1 #{desc}"

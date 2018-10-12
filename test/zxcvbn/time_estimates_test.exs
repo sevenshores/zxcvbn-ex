@@ -2,12 +2,32 @@ defmodule Zxcvbn.TimeEstimatesTest do
   use ExUnit.Case
   alias Zxcvbn.TimeEstimates
 
-  test "outliers" do
-    assert 0.56 |> TimeEstimates.display_time() == "less than a second"
-    assert 1.0e10 |> TimeEstimates.display_time() == "centuries"
+  test "attack times" do
+    expected = %{
+      crack_times_seconds: %{
+        online_throttling_100_per_hour: 18.175583333333332,
+        online_no_throttling_10_per_second: 654_321.0,
+        offline_slow_hashing_1e4_per_second: 654.321,
+        offline_fast_hashing_1e10_per_second: 6.54321e-4
+      },
+      crack_times_display: %{
+        online_throttling_100_per_hour: "18 seconds",
+        online_no_throttling_10_per_second: "7 days",
+        offline_slow_hashing_1e4_per_second: "10 minutes",
+        offline_fast_hashing_1e10_per_second: "less than a second"
+      },
+      score: 2
+    }
+
+    assert 6_543_210 |> TimeEstimates.estimate_attack_times() == expected
   end
 
-  test "anything between 1 second and several years" do
+  test "display_time: outliers" do
+    assert 0.56 |> TimeEstimates.display_time() == "less than a second"
+    assert 3_153_600_001 |> TimeEstimates.display_time() == "centuries"
+  end
+
+  test "display_time: anything between 1 second and several years" do
     assert 35 |> TimeEstimates.display_time() == "35 seconds"
 
     two_mins = 2 * 60 + 35
@@ -26,7 +46,7 @@ defmodule Zxcvbn.TimeEstimatesTest do
     assert five_years |> TimeEstimates.display_time() == "5 years"
   end
 
-  test "anything whenever base is 1" do
+  test "display_time: anything whenever base is 1" do
     assert 1 |> TimeEstimates.display_time() == "1 second"
     assert 60 |> TimeEstimates.display_time() == "1 minute"
 
@@ -41,5 +61,14 @@ defmodule Zxcvbn.TimeEstimatesTest do
 
     year = 365 * 24 * 60 * 60
     assert year |> TimeEstimates.display_time() == "1 year"
+
+    century = 100 * 365 * 24 * 60 * 60
+    assert century |> TimeEstimates.display_time() == "1 century"
+  end
+
+  test "float input is allowed" do
+    assert 0.45 |> TimeEstimates.display_time() == "less than a second"
+    assert 3_153_600_000.0 |> TimeEstimates.display_time() == "1 century"
+    assert 60.0 |> TimeEstimates.display_time() == "1 minute"
   end
 end
