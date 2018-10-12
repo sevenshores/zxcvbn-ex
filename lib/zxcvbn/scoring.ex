@@ -366,17 +366,12 @@ defmodule Zxcvbn.Scoring do
     # average
   end
 
-  defp nCk(n, k) do
-    # # http://blog.plover.com/math/choose.html
-    # return 0 if k > n
-    # return 1 if k == 0
-    # r = 1
-    # for d in [1..k]
-    #   r *= n
-    #   r /= d
-    #   n -= 1
-    # r
+  def nCk(n, k) when n>=0 and k>=0 do
+    if k==0, do: 1, else: nCk(n, k, 1, 1)
   end
+
+  defp nCk(n, k, k, acc), do: div(acc*(n-k+1), k)
+  defp nCk(n, k, i, acc), do: nCk(n, k, i+1, div(acc*(n-i+1), i))
 
   defp log10(n) do
     # Math.log(n) / Math.log(10) # IE doesn't support Math.log10 :(
