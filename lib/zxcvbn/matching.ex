@@ -95,30 +95,44 @@ defmodule Zxcvbn.Matching do
   @doc """
   Dictionary match (common passwords, english, last names, etc).
   """
+  def dictionary_match("", _), do: []
+
   def dictionary_match(password, ranked_dictionaries \\ @ranked_dictionaries) do
-    # # _ranked_dictionaries variable is for unit testing purposes
-    # matches = []
-    # len = password.length
-    # password_lower = password.toLowerCase()
+    password
+    |> word_permutations
+    |> Enum.map(fn word -> dictionaries_matches(ranked_dictionaries, word, []) end)
+    |> List.flatten()
+  end
 
-    # for dictionary_name, ranked_dict of _ranked_dictionaries
-    #   for i in [0...len]
-    #     for j in [i...len]
-    #       if password_lower[i..j] of ranked_dict
-    #         word = password_lower[i..j]
-    #         rank = ranked_dict[word]
-    #         matches.push
-    #           pattern: 'dictionary'
-    #           i: i
-    #           j: j
-    #           token: password[i..j]
-    #           matched_word: word
-    #           rank: rank
-    #           dictionary_name: dictionary_name
-    #           reversed: false
-    #           l33t: false
+  defp word_permutations(word) do
+    len = String.length(word)
 
-    # @sorted matches
+    for i <- 0..len,
+        j <- 1..(len - i),
+        do: %{
+          i: i,
+          j: i + j - 1,
+          token: String.slice(word, i, j),
+          matched_word: String.downcase(String.slice(word, i, j)),
+          reversed: false,
+          l33t: false,
+          rank: nil,
+          dictionary_name: nil,
+          pattern: nil
+        }
+  end
+
+  defp dictionaries_matches([], _, matches), do: matches
+
+  defp dictionaries_matches([head | tail], permutation, matches) do
+    case head.words[permutation.matched_word] do
+      nil ->
+        dictionaries_matches(tail, permutation, matches)
+
+      rank ->
+        match = %{permutation | rank: rank, dictionary_name: head.name, pattern: "dictionary"}
+        dictionaries_matches(tail, permutation, matches ++ [match])
+    end
   end
 
   def reverse_dictionary_match(password, ranked_dictionaries \\ @ranked_dictionaries) do
