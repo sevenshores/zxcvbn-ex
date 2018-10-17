@@ -301,22 +301,30 @@ defmodule Zxcvbn.Scoring do
 
   ## Variations
 
-  def uppercase_variations(match) do
-    # word = match.token
-    # return 1 if word.match(@ALL_LOWER) or word.toLowerCase() == word
-    # # a capitalized word is the most common capitalization scheme,
-    # # so it only doubles the search space (uncapitalized + capitalized).
-    # # allcaps and end-capitalized are common enough too, underestimate as 2x factor to be safe.
-    # for regex in [@START_UPPER, @END_UPPER, @ALL_UPPER]
-    #   return 2 if word.match regex
-    # # otherwise calculate the number of ways to capitalize U+L uppercase+lowercase letters
-    # # with U uppercase letters or less. or, if there's more uppercase than lower (for eg. PASSwORD),
-    # # the number of ways to lowercase U+L letters with L lowercase letters or less.
-    # U = (chr for chr in word.split('') when chr.match /[A-Z]/).length
-    # L = (chr for chr in word.split('') when chr.match /[a-z]/).length
-    # variations = 0
-    # variations += @nCk(U + L, i) for i in [1..Math.min(U, L)]
-    # variations
+  def uppercase_variations(%{token: word}) do
+    start_upper = ~r/^[A-Z][^A-Z]+$/
+    end_upper = ~r/^[^A-Z]+[A-Z]$/
+    all_upper = ~r/^[^a-z]+$/
+    all_lower = ~r/^[^A-Z]+$/
+
+    cond do
+      word =~ all_lower or String.downcase(word) == word ->
+        1
+
+      # a capitalized word is the most common capitalization scheme,
+      # so it only doubles the search space (uncapitalized + capitalized).
+      # allcaps and end-capitalized are common enough too, underestimate as 2x factor to be safe.
+      word =~ all_upper or word =~ start_upper or word =~ end_upper ->
+        2
+
+      # otherwise calculate the number of ways to capitalize n_u+n_l uppercase+lowercase letters
+      # with nU uppercase letters or less. or, if there's more uppercase than lower (for eg. PASSwORD),
+      # the number of ways to lowercase nU+nL letters with nL lowercase letters or less.
+      true ->
+        n_u = length(Enum.filter(String.codepoints(word), fn char -> char =~ ~r/[A-Z]/ end))
+        n_l = length(Enum.filter(String.codepoints(word), fn char -> char =~ ~r/[a-z]/ end))
+        Enum.reduce(1..min(n_u, n_l), 0, fn i, acc -> acc + nCk(n_u + n_l, i) end)
+    end
   end
 
   def l33t_variations(match) do
