@@ -138,17 +138,20 @@ defmodule Zxcvbn.Matching do
   end
 
   def reverse_dictionary_match(password, ranked_dictionaries \\ @ranked_dictionaries) do
-    reversed_password = String.reverse(password)
-    # matches = @dictionary_match reversed_password, _ranked_dictionaries
-    # for match in matches
-    #   match.token = match.token.split('').reverse().join('') # reverse back
-    #   match.reversed = true
-    #   # map coordinates back to original string
-    #   [match.i, match.j] = [
-    #     password.length - 1 - match.j
-    #     password.length - 1 - match.i
-    #   ]
-    # @sorted matches
+    password
+    |> String.reverse()
+    |> dictionary_match(ranked_dictionaries)
+    |> Enum.map(&reverse_match(&1, String.length(password)))
+  end
+
+  defp reverse_match(match, length) do
+    %{
+      match
+      | i: length - 1 - match.j,
+        j: length - 1 - match.i,
+        reversed: true,
+        token: String.reverse(match.token)
+    }
   end
 
   @doc """
