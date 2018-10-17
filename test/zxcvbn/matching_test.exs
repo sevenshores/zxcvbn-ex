@@ -50,7 +50,7 @@ defmodule Zxcvbn.MatchingTest do
 
       assert match == expected
 
-      {match, matches} = List.pop_at(matches, 0)
+      {match, _} = List.pop_at(matches, 0)
       expected = %{expected | i: 6, j: 10, rank: 3, token: "board", matched_word: "board"}
       assert match == expected
     end
@@ -74,7 +74,7 @@ defmodule Zxcvbn.MatchingTest do
 
       assert match == expected
 
-      {match, matches} = List.pop_at(matches, 0)
+      {match, _} = List.pop_at(matches, 0)
       expected = %{expected | i: 2, j: 5, rank: 5, token: "cdef", matched_word: "cdef"}
       assert match == expected
     end
@@ -98,7 +98,7 @@ defmodule Zxcvbn.MatchingTest do
 
       assert match == expected
 
-      {match, matches} = List.pop_at(matches, 0)
+      {match, _} = List.pop_at(matches, 0)
 
       expected = %{
         expected
@@ -118,7 +118,7 @@ defmodule Zxcvbn.MatchingTest do
       word = "asdf1234&*"
 
       matches = Matching.dictionary_match("q" <> word, dictionaries())
-      {match, matches} = List.pop_at(matches, 0)
+      {match, _} = List.pop_at(matches, 0)
 
       expected = %{
         dict_match()
@@ -133,19 +133,19 @@ defmodule Zxcvbn.MatchingTest do
       assert match == expected
 
       matches = Matching.dictionary_match("%" <> word, dictionaries())
-      {match, matches} = List.pop_at(matches, 0)
+      {match, _} = List.pop_at(matches, 0)
       assert match == expected
 
       matches = Matching.dictionary_match("q" <> word <> "%%", dictionaries())
-      {match, matches} = List.pop_at(matches, 0)
+      {match, _} = List.pop_at(matches, 0)
       assert match == expected
 
       matches = Matching.dictionary_match("%" <> word <> "pp", dictionaries())
-      {match, matches} = List.pop_at(matches, 0)
+      {match, _} = List.pop_at(matches, 0)
       assert match == expected
 
       matches = Matching.dictionary_match(word <> "%%", dictionaries())
-      {match, matches} = List.pop_at(matches, 0)
+      {match, _} = List.pop_at(matches, 0)
 
       expected = %{
         dict_match()
@@ -160,7 +160,7 @@ defmodule Zxcvbn.MatchingTest do
       assert match == expected
 
       matches = Matching.dictionary_match(word <> "qq", dictionaries())
-      {match, matches} = List.pop_at(matches, 0)
+      {match, _} = List.pop_at(matches, 0)
       assert match == expected
     end
 
