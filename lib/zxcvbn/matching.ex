@@ -108,28 +108,31 @@ defmodule Zxcvbn.Matching do
 
     for i <- 0..len,
         j <- 1..(len - i),
-        do: %{
-          i: i,
-          j: i + j - 1,
-          token: String.slice(word, i, j),
-          matched_word: String.downcase(String.slice(word, i, j)),
-          reversed: false,
-          l33t: false,
-          rank: nil,
-          dictionary_name: nil,
-          pattern: nil
-        }
+        do: %{i: i, j: i + j - 1, token: String.slice(word, i, j)}
   end
 
   defp dictionaries_matches([], _, matches), do: matches
 
   defp dictionaries_matches([head | tail], permutation, matches) do
-    case head.words[permutation.matched_word] do
+    matched_word = String.downcase(permutation.token)
+
+    case head.words[matched_word] do
       nil ->
         dictionaries_matches(tail, permutation, matches)
 
       rank ->
-        match = %{permutation | rank: rank, dictionary_name: head.name, pattern: "dictionary"}
+        match = %{
+          i: permutation.i,
+          j: permutation.j,
+          token: permutation.token,
+          matched_word: matched_word,
+          reversed: false,
+          l33t: false,
+          rank: rank,
+          dictionary_name: head.name,
+          pattern: "dictionary"
+        }
+
         dictionaries_matches(tail, permutation, matches ++ [match])
     end
   end
