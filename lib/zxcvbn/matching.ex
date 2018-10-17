@@ -100,8 +100,7 @@ defmodule Zxcvbn.Matching do
   def dictionary_match(password, ranked_dictionaries \\ @ranked_dictionaries) do
     password
     |> word_permutations
-    |> Enum.map(fn word -> dictionaries_matches(ranked_dictionaries, word, []) end)
-    |> List.flatten()
+    |> Enum.flat_map(&dictionaries_matches(ranked_dictionaries, &1, []))
   end
 
   defp word_permutations(word) do
