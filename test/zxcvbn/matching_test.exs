@@ -163,44 +163,91 @@ defmodule Zxcvbn.MatchingTest do
       {match, _} = List.pop_at(matches, 0)
       assert match == expected
     end
+  end
 
-    defp dictionaries() do
-      [
+  describe "reverse_dictionary_match/2" do
+    # @tag :pending
+    test "matches against reversed words" do
+      dicts = [
         %{
           name: "d1",
           words: %{
-            "motherboard" => 1,
-            "mother" => 2,
-            "board" => 3,
-            "abcd" => 4,
-            "cdef" => 5
-          }
-        },
-        %{
-          name: "d2",
-          words: %{
-            "z" => 1,
-            "8" => 2,
-            "99" => 3,
-            "$" => 4,
-            "asdf1234&*" => 5
+            "123" => 1,
+            "321" => 2,
+            "456" => 3,
+            "654" => 4
           }
         }
       ]
-    end
 
-    defp dict_match() do
-      %{
-        pattern: "dictionary",
-        i: 0,
-        j: 0,
-        token: "",
-        matched_word: "",
-        rank: 0,
-        dictionary_name: "",
-        reversed: false,
-        l33t: false
+      matches = Matching.reverse_dictionary_match("0123456789", dicts)
+
+      expected = %{
+        dict_match()
+        | i: 4,
+          j: 6,
+          rank: 4,
+          token: "456",
+          matched_word: "654",
+          dictionary_name: "d1",
+          reversed: true
       }
+
+      {match, matches} = List.pop_at(matches, 0)
+      assert match == expected
+
+      expected = %{
+        expected
+        | i: 1,
+          j: 3,
+          rank: 2,
+          token: "123",
+          matched_word: "321",
+          dictionary_name: "d1",
+          reversed: true
+      }
+
+      {match, _} = List.pop_at(matches, 0)
+      assert match == expected
     end
+  end
+
+  defp dictionaries() do
+    [
+      %{
+        name: "d1",
+        words: %{
+          "motherboard" => 1,
+          "mother" => 2,
+          "board" => 3,
+          "abcd" => 4,
+          "cdef" => 5
+        }
+      },
+      %{
+        name: "d2",
+        words: %{
+          "z" => 1,
+          "8" => 2,
+          "99" => 3,
+          "$" => 4,
+          "asdf1234&*" => 5
+        }
+      }
+    ]
+  end
+
+  defp dict_match() do
+    %{
+      pattern: "dictionary",
+      i: 0,
+      j: 0,
+      token: "",
+      matched_word: "",
+      rank: 0,
+      dictionary_name: "",
+      reversed: false,
+      l33t: false
+    }
   end
 end
