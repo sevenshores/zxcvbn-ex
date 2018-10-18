@@ -26,6 +26,52 @@ defmodule Zxcvbn.ScoringTest do
            "pascal's triangle identity"
   end
 
+  test 'regex guesses alpha_lower' do
+    match = %{
+      token: "aizocdk",
+      regex_name: :alpha_lower,
+      regex_match: ['aizocdk']
+    }
+
+    msg = "guesses of 26^7 for 7-char lowercase regex"
+    assert Scoring.regex_guesses(match) == :math.pow(26, 7), msg
+  end
+
+  test 'regex guesses alphanumeric' do
+    match = %{
+      token: "ag7C8",
+      regex_name: :alphanumeric,
+      regex_match: ["ag7C8"]
+    }
+
+    msg = "guesses of 62^5 for 5-char alphanumeric regex"
+
+    assert Scoring.regex_guesses(match) == :math.pow(2 * 26 + 10, 5), msg
+  end
+
+  test 'regex guesses recent_year distant' do
+    match = %{
+      token: "1972",
+      regex_name: :recent_year,
+      regex_match: ["1972"]
+    }
+
+    msg = "guesses of |year - REFERENCE_YEAR| for distant year matches"
+    assert Scoring.regex_guesses(match) == abs(Scoring.reference_year() - 1972), msg
+  end
+
+  test 'regex guesses recent_year close' do
+    match = %{
+      token: "2005",
+      regex_name: :recent_year,
+      regex_match: ["2005"]
+    }
+
+    msg = "guesses of MIN_YEAR_SPACE for a year close to REFERENCE_YEAR"
+    result = Scoring.regex_guesses(match)
+    expected = Scoring.min_year_space()
+  end
+
   test 'date guesses' do
     match = %{
       token: "1123",
