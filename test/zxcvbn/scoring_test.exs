@@ -26,6 +26,38 @@ defmodule Zxcvbn.ScoringTest do
            "pascal's triangle identity"
   end
 
+  test 'date guesses' do
+    match = %{
+      token: "1123",
+      separator: "",
+      has_full_year: false,
+      year: 1923,
+      month: 1,
+      day: 1
+    }
+
+    result = Scoring.date_guesses(match)
+    expected = 365 * abs(Scoring.reference_year() - match[:year])
+    msg = "Expected guesses for dates to be #{expected}, but got: #{result}"
+    assert expected == result, msg
+  end
+
+  test 'date with separator' do
+    match = %{
+      token: "1/1/2010",
+      separator: "/",
+      has_full_year: true,
+      year: 2010,
+      month: 1,
+      day: 1
+    }
+
+    result = Scoring.date_guesses(match)
+    expected = 365 * Scoring.min_year_space() * 4
+    msg = "Recent years assume MIN_YEAR_SPACE. Extra guesses are added for separators."
+    assert expected == result, msg
+  end
+
   test "uppercase variants" do
     test_sets = [
       ["", 1],
@@ -42,11 +74,14 @@ defmodule Zxcvbn.ScoringTest do
       ["ABCdef", Scoring.nCk(6, 1) + Scoring.nCk(6, 2) + Scoring.nCk(6, 3)]
     ]
 
-    Enum.each(test_sets, fn [word, expected] ->
-      actual = Scoring.uppercase_variations(%{token: word})
+    Enum.each(
+      test_sets,
+      fn [word, expected] ->
+        actual = Scoring.uppercase_variations(%{token: word})
 
-      assert expected == actual,
-             "expected guess multiplier of #{word} is #{expected}, actual: #{actual} "
-    end)
+        assert expected == actual,
+               "expected guess multiplier of #{word} is #{expected}, actual: #{actual} "
+      end
+    )
   end
 end
