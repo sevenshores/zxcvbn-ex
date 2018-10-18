@@ -300,26 +300,20 @@ defmodule Zxcvbn.Scoring do
   end
 
   ## Variations
-
   def uppercase_variations(%{token: word}) do
-    start_upper = ~r/^[A-Z][^A-Z]+$/
-    end_upper = ~r/^[^A-Z]+[A-Z]$/
-    all_upper = ~r/^[^a-z]+$/
-    all_lower = ~r/^[^A-Z]+$/
-
     cond do
-      word =~ all_lower or String.downcase(word) == word ->
+      word =~ @all_lower or String.downcase(word) == word ->
         1
 
       # a capitalized word is the most common capitalization scheme,
       # so it only doubles the search space (uncapitalized + capitalized).
       # allcaps and end-capitalized are common enough too, underestimate as 2x factor to be safe.
-      word =~ all_upper or word =~ start_upper or word =~ end_upper ->
+      word =~ @all_upper or word =~ @start_upper or word =~ @end_upper ->
         2
 
       # otherwise calculate the number of ways to capitalize n_u+n_l uppercase+lowercase letters
-      # with nU uppercase letters or less. or, if there's more uppercase than lower (for eg. PASSwORD),
-      # the number of ways to lowercase nU+nL letters with nL lowercase letters or less.
+      # with n_u uppercase letters or less. or, if there's more uppercase than lower (for eg. PASSwORD),
+      # the number of ways to lowercase n_u+n_l letters with n_l lowercase letters or less.
       true ->
         n_u = length(Enum.filter(String.codepoints(word), fn char -> char =~ ~r/[A-Z]/ end))
         n_l = length(Enum.filter(String.codepoints(word), fn char -> char =~ ~r/[a-z]/ end))
