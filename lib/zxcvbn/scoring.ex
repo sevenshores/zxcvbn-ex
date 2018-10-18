@@ -8,7 +8,10 @@ defmodule Zxcvbn.Scoring do
 
   # Used in regex and date guesses
   @min_year_space 20
+  def min_year_space, do: @min_year_space
+
   @reference_year Date.utc_today().year
+  def reference_year, do: @reference_year
 
   # Used in variations
   @start_upper ~r/^[A-Z][^A-Z]+$/
@@ -253,13 +256,16 @@ defmodule Zxcvbn.Scoring do
     #     year_space
   end
 
-  def date_guesses(match) do
-    # # base guesses: (year distance from REFERENCE_YEAR) * num_days * num_years
-    # year_space = Math.max(Math.abs(match.year - @REFERENCE_YEAR), @MIN_YEAR_SPACE)
-    # guesses = year_space * 365
-    # # add factor of 4 for separator selection (one of ~4 choices)
-    # guesses *= 4 if match.separator
-    # guesses
+  def date_guesses(%{year: year, separator: separator}) do
+    # base guesses: (year distance from REFERENCE_YEAR) * num_days * num_years
+    year_space = max(abs(year - @reference_year), @min_year_space)
+    guesses = year_space * 365
+    # add factor of 4 for separator selection (one of ~4 choices)
+    if separator != "" do
+      guesses * 4
+    else
+      guesses
+    end
   end
 
   def spatial_guesses(match) do
