@@ -8,7 +8,10 @@ defmodule Zxcvbn.Scoring do
 
   # Used in regex and date guesses
   @min_year_space 20
+  def min_year_space, do: @min_year_space
+
   @reference_year Date.utc_today().year
+  def reference_year, do: @reference_year
 
   # Used in variations
   @start_upper ~r/^[A-Z][^A-Z]+$/
@@ -234,23 +237,27 @@ defmodule Zxcvbn.Scoring do
     # base_guesses * match.token.length
   end
 
-  def regex_guesses(match) do
-    # char_class_bases =
-    #   alpha_lower:  26
-    #   alpha_upper:  26
-    #   alpha:        52
-    #   alphanumeric: 62
-    #   digits:       10
-    #   symbols:      33
-    # if match.regex_name of char_class_bases
-    #   Math.pow(char_class_bases[match.regex_name], match.token.length)
-    # else switch match.regex_name
-    #   when 'recent_year'
-    #     # conservative estimate of year space: num years from REFERENCE_YEAR.
-    #     # if year is close to REFERENCE_YEAR, estimate a year space of MIN_YEAR_SPACE.
-    #     year_space = Math.abs parseInt(match.regex_match[0]) - @REFERENCE_YEAR
-    #     year_space = Math.max year_space, @MIN_YEAR_SPACE
-    #     year_space
+  def regex_guesses(%{regex_name: regex_name, token: token, regex_match: regex_match})
+      when regex_name == :recent_year do
+    # conservative estimate of year space: num years from REFERENCE_YEAR.
+    # if year is close to REFERENCE_YEAR, estimate a year space of MIN_YEAR_SPACE.
+    {parsed_input, _} = Integer.parse(List.first(regex_match))
+    max(abs(parsed_input - @reference_year), @min_year_space)
+  end
+
+  def regex_guesses(%{regex_name: regex_name, token: token, regex_match: regex_match}) do
+    char_class_bases = %{
+      alpha_lower: 26,
+      alpha_upper: 26,
+      alpha: 52,
+      alphanumeric: 62,
+      digits: 10,
+      symbols: 33
+    }
+
+    if Map.has_key?(char_class_bases, regex_name) do
+      :math.pow(char_class_bases[regex_name], String.length(token))
+    end
   end
 
   def date_guesses(match) do
