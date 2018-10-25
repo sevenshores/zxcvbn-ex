@@ -3,15 +3,24 @@ defmodule Zxcvbn.Data.ParserTest do
 
   import Zxcvbn.Data.Parser, only: [parse_data_file: 1]
 
-  # todo as a 'setUp' create a temp file in priv/data, delete afterwards
   describe "parse_data_file/1" do
     # @tag :pending
     test "" do
-      dict = parse_data_file("surnames.txt")
-      assert dict.words["smith"] == 1
-      assert dict.words["weed"] == 3908
+      # setup
+      {:ok, file} = File.open("priv/data/test.txt", [:write, :utf8])
+      IO.write(file, "first\nmiddle\nend\n")
+      File.close(file)
 
-      assert dict.name == "surnames"
+      dict = parse_data_file("test.txt")
+      assert dict.words["first"] == 1
+      assert dict.words["middle"] == 2
+      assert dict.words["end"] == 3
+      assert dict.words["googlygoob"] == nil
+
+      assert dict.name == "test"
+
+      # teardown
+      File.rm("priv/data/test.txt")
     end
   end
 end
