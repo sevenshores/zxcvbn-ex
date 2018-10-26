@@ -11,8 +11,7 @@ defmodule Zxcvbn.Data.ParserTest do
       assert dict.words["first"] == 1
       assert dict.words["middle"] == 2
       assert dict.words["end"] == 3
-      assert dict.words["googlygoob"] == nil
-
+      assert is_nil(dict.words["googlygoob"])
       assert dict.name == "test"
     end
   end
