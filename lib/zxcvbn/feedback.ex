@@ -11,7 +11,7 @@ defmodule Zxcvbn.Feedback do
     }
   end
 
-  def get_feedback(_score, sequence) when length(sequence) == 0 do
+  def get_feedback(_score, []) do
     %{
       warning: "",
       suggestions: [

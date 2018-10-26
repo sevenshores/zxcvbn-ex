@@ -159,7 +159,11 @@ defmodule Zxcvbn.Matching do
   @doc """
   Dictionary match with common l33t substitutions.
   """
-  def l33t_match(_password, _ranked_dictionaries \\ ranked_dictionaries(), _l33t_table \\ @l33t_table) do
+  def l33t_match(
+        _password,
+        _ranked_dictionaries \\ ranked_dictionaries(),
+        _l33t_table \\ @l33t_table
+      ) do
     # matches = []
     # for sub in @enumerate_l33t_subs @relevant_l33t_subtable(password, _l33t_table)
     #   break if @empty sub # corner case: password has no relevant subs.
