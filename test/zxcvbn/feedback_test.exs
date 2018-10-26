@@ -101,36 +101,38 @@ defmodule Zxcvbn.FeedbackTest do
     end
 
     test "adds suggestion for token starting with a capital letter", match do
-      match = %{match | token: "Capitalized" }
+      match = %{match | token: "Capitalized"}
       %{suggestions: [suggestion]} = Feedback.get_dictionary_match_feedback(match, true)
 
       assert suggestion == "Capitalization doesn't help very much"
     end
 
     test "adds suggestion for all caps", match do
-      match = %{match | token: "CAPITALIZED" }
+      match = %{match | token: "CAPITALIZED"}
       %{suggestions: [suggestion]} = Feedback.get_dictionary_match_feedback(match, true)
 
       assert suggestion == "All-uppercase is almost as easy to guess as all-lowercase"
     end
 
     test "adds suggestion if token is a short reversed word", match do
-      match = %{match | token: "tab", reversed: true }
+      match = %{match | token: "tab", reversed: true}
       %{suggestions: [suggestion]} = Feedback.get_dictionary_match_feedback(match, true)
 
       assert suggestion == "Reversed words aren't much harder to guess"
     end
 
     test "adds suggestion for basic substitutions", match do
-      match = %{match | token: "b@asic$substitution", l33t: true }
+      match = %{match | token: "b@asic$substitution", l33t: true}
       %{suggestions: [suggestion]} = Feedback.get_dictionary_match_feedback(match, true)
 
-      assert suggestion == "Predictable substitutions like '@' instead of 'a' don't help very much"
+      assert suggestion ==
+               "Predictable substitutions like '@' instead of 'a' don't help very much"
     end
 
     test "suggestions stack", match do
-      match = %{match | token: "Tab", l33t: true, reversed: true }
+      match = %{match | token: "Tab", l33t: true, reversed: true}
       %{suggestions: suggestions} = Feedback.get_dictionary_match_feedback(match, true)
+
       expected = [
         "Predictable substitutions like '@' instead of 'a' don't help very much",
         "Reversed words aren't much harder to guess",

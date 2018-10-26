@@ -95,8 +95,11 @@ defmodule Zxcvbn.Feedback do
       is_sole_match && !(match.l33t || match.reversed) ->
         match_rank_feedback(match.rank)
 
-      match.guesses_log10 <= 4 -> "This is a very common password"
-      true -> ""
+      match.guesses_log10 <= 4 ->
+        "This is a very common password"
+
+      true ->
+        ""
     end
   end
 
@@ -114,11 +117,13 @@ defmodule Zxcvbn.Feedback do
     if is_sole_match, do: "A word by itself is easy to guess", else: ""
   end
 
-  defp feedback_warning(%{dictionary_name: name}, is_sole_match = true) when name in ["surnames", "male_names", "female_names"] do
+  defp feedback_warning(%{dictionary_name: name}, is_sole_match = true)
+       when name in ["surnames", "male_names", "female_names"] do
     "Names and surnames by themselves are easy to guess"
   end
 
-  defp feedback_warning(%{dictionary_name: name}, is_sole_match = false) when name in ["surnames", "male_names", "female_names"] do
+  defp feedback_warning(%{dictionary_name: name}, is_sole_match = false)
+       when name in ["surnames", "male_names", "female_names"] do
     "Common names and surnames are easy to guess"
   end
 
@@ -127,17 +132,26 @@ defmodule Zxcvbn.Feedback do
   def feedback_suggestions(%{token: token, reversed: reversed, l33t: l33t}) do
     []
     |> capitalization_suggestions(token)
-    |> prepend_if_true(reversed && String.length(token) <= 4, "Reversed words aren't much harder to guess")
-    |> prepend_if_true(l33t, "Predictable substitutions like '@' instead of 'a' don't help very much")
+    |> prepend_if_true(
+      reversed && String.length(token) <= 4,
+      "Reversed words aren't much harder to guess"
+    )
+    |> prepend_if_true(
+      l33t,
+      "Predictable substitutions like '@' instead of 'a' don't help very much"
+    )
   end
 
   defp capitalization_suggestions(suggestions, token) do
     cond do
-      String.match?(token, Scoring.start_upper) ->
+      String.match?(token, Scoring.start_upper()) ->
         ["Capitalization doesn't help very much" | suggestions]
-      String.match?(token, Scoring.all_upper) && String.downcase(token) != token ->
+
+      String.match?(token, Scoring.all_upper()) && String.downcase(token) != token ->
         ["All-uppercase is almost as easy to guess as all-lowercase" | suggestions]
-      true -> suggestions
+
+      true ->
+        suggestions
     end
   end
 

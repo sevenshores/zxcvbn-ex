@@ -132,10 +132,10 @@ defmodule Zxcvbn.ScoringTest do
   end
 
   describe "start_upper/0" do
-    assert Scoring.start_upper == ~r/^[A-Z][^A-Z]+$/
+    assert Scoring.start_upper() == ~r/^[A-Z][^A-Z]+$/
   end
 
   describe "all_upper/0" do
-    assert Scoring.all_upper == ~r/^[^a-z]+$/
+    assert Scoring.all_upper() == ~r/^[^a-z]+$/
   end
 end
