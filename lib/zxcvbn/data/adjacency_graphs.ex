@@ -1,4 +1,4 @@
-defmodule Zxcvbn.AdjacencyGraphs do
+defmodule Zxcvbn.Data.AdjacencyGraphs do
   @moduledoc false
 
   def all do
