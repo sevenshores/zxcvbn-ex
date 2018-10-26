@@ -354,6 +354,14 @@ defmodule Zxcvbn.Scoring do
     # variations
   end
 
+  def start_upper do
+    @start_upper
+  end
+
+  def all_upper do
+    @all_upper
+  end
+
   ## Helpers
 
   defp adjacency_graphs, do: Zxcvbn.Data.AdjacencyGraphs.all()

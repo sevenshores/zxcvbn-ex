@@ -1,7 +1,7 @@
 defmodule Zxcvbn.ScoringTest do
   use ExUnit.Case
 
-  alias Zxcvbn.Scoring, as: Scoring
+  alias Zxcvbn.Scoring
 
   test "nCk" do
     test_sets = [
@@ -129,5 +129,13 @@ defmodule Zxcvbn.ScoringTest do
                "expected guess multiplier of #{word} is #{expected}, actual: #{actual} "
       end
     )
+  end
+
+  describe "start_upper/0" do
+    assert Scoring.start_upper == ~r/^[A-Z][^A-Z]+$/
+  end
+
+  describe "all_upper/0" do
+    assert Scoring.all_upper == ~r/^[^a-z]+$/
   end
 end
