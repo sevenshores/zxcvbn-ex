@@ -52,7 +52,7 @@ defmodule Zxcvbn.Scoring do
      D^(l-1) approximates Sum(D^i for i in [1..l-1])
 
   """
-  def most_guessable_match_sequence(password, matches, exclude_additive \\ false) do
+  def most_guessable_match_sequence(_password, _matches, _exclude_additive \\ false) do
     # n = password.length
 
     # # partition matches into sublists according to ending index j
@@ -177,7 +177,7 @@ defmodule Zxcvbn.Scoring do
   @doc """
   Guess estimation -- one function per match pattern.
   """
-  def estimate_guesses(match, password) do
+  def estimate_guesses(_match, _password) do
     # return match.guesses if match.guesses? # a match's guess estimate doesn't change. cache it.
     # min_guesses = 1
     # if match.token.length < password.length
@@ -201,7 +201,7 @@ defmodule Zxcvbn.Scoring do
 
   ## Guesses
 
-  def bruteforce_guesses(match) do
+  def bruteforce_guesses(_match) do
     # guesses = Math.pow BRUTEFORCE_CARDINALITY, match.token.length
     # if guesses == Number.POSITIVE_INFINITY
     #     guesses = Number.MAX_VALUE;
@@ -214,11 +214,11 @@ defmodule Zxcvbn.Scoring do
     # Math.max guesses, min_guesses
   end
 
-  def repeat_guesses(match) do
+  def repeat_guesses(_match) do
     # match.base_guesses * match.repeat_count
   end
 
-  def sequence_guesses(match) do
+  def sequence_guesses(_match) do
     # first_chr = match.token.charAt(0)
     # # lower guesses for obvious starting points
     # if first_chr in ['a', 'A', 'z', 'Z', '0', '1', '9']
@@ -237,7 +237,7 @@ defmodule Zxcvbn.Scoring do
     # base_guesses * match.token.length
   end
 
-  def regex_guesses(%{regex_name: regex_name, token: token, regex_match: regex_match})
+  def regex_guesses(%{regex_name: regex_name, token: _token, regex_match: regex_match})
       when regex_name == :recent_year do
     # conservative estimate of year space: num years from REFERENCE_YEAR.
     # if year is close to REFERENCE_YEAR, estimate a year space of MIN_YEAR_SPACE.
@@ -245,7 +245,7 @@ defmodule Zxcvbn.Scoring do
     max(abs(parsed_input - @reference_year), @min_year_space)
   end
 
-  def regex_guesses(%{regex_name: regex_name, token: token, regex_match: regex_match}) do
+  def regex_guesses(%{regex_name: regex_name, token: token, regex_match: _regex_match}) do
     char_class_bases = %{
       alpha_lower: 26,
       alpha_upper: 26,
@@ -272,7 +272,7 @@ defmodule Zxcvbn.Scoring do
     end
   end
 
-  def spatial_guesses(match) do
+  def spatial_guesses(_match) do
     # if match.graph in ['qwerty', 'dvorak']
     #   s = @KEYBOARD_STARTING_POSITIONS
     #   d = @KEYBOARD_AVERAGE_DEGREE
@@ -301,7 +301,7 @@ defmodule Zxcvbn.Scoring do
     # guesses
   end
 
-  def dictionary_guesses(match) do
+  def dictionary_guesses(_match) do
     # match.base_guesses = match.rank # keep these as properties for display purposes
     # match.uppercase_variations = @uppercase_variations match
     # match.l33t_variations = @l33t_variations match
@@ -331,7 +331,7 @@ defmodule Zxcvbn.Scoring do
     end
   end
 
-  def l33t_variations(match) do
+  def l33t_variations(_match) do
     # return 1 if not match.l33t
     # variations = 1
     # for subbed, unsubbed of match.sub
@@ -354,6 +354,14 @@ defmodule Zxcvbn.Scoring do
     # variations
   end
 
+  def start_upper do
+    @start_upper
+  end
+
+  def all_upper do
+    @all_upper
+  end
+
   ## Helpers
 
   defp adjacency_graphs, do: Zxcvbn.Data.AdjacencyGraphs.all()
@@ -370,7 +378,7 @@ defmodule Zxcvbn.Scoring do
 
   # On qwerty, 'g' has degree 6, being adjacent to 'ftyhbv'. '\' has degree 1.
   # this calculates the average over all keys.
-  defp calc_average_degree(graph) do
+  defp calc_average_degree(_graph) do
     # average = 0
     # for key, neighbors of graph
     #   average += (n for n in neighbors when n).length
@@ -385,15 +393,15 @@ defmodule Zxcvbn.Scoring do
   defp nCk(n, k, k, acc), do: div(acc * (n - k + 1), k)
   defp nCk(n, k, i, acc), do: nCk(n, k, i + 1, div(acc * (n - i + 1), i))
 
-  defp log10(n) do
+  defp log10(_n) do
     # Math.log(n) / Math.log(10) # IE doesn't support Math.log10 :(
   end
 
-  defp log2(n) do
+  defp log2(_n) do
     # Math.log(n) / Math.log(2)
   end
 
-  defp factorial(n) do
+  defp factorial(_n) do
     # # unoptimized, called only on small n
     # return 1 if n < 2
     # f = 1

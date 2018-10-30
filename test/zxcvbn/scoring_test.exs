@@ -1,7 +1,7 @@
 defmodule Zxcvbn.ScoringTest do
   use ExUnit.Case
 
-  alias Zxcvbn.Scoring, as: Scoring
+  alias Zxcvbn.Scoring
 
   test "nCk" do
     test_sets = [
@@ -26,7 +26,7 @@ defmodule Zxcvbn.ScoringTest do
            "pascal's triangle identity"
   end
 
-  test 'regex guesses alpha_lower' do
+  test "regex guesses alpha_lower" do
     match = %{
       token: "aizocdk",
       regex_name: :alpha_lower,
@@ -37,7 +37,7 @@ defmodule Zxcvbn.ScoringTest do
     assert Scoring.regex_guesses(match) == :math.pow(26, 7), msg
   end
 
-  test 'regex guesses alphanumeric' do
+  test "regex guesses alphanumeric" do
     match = %{
       token: "ag7C8",
       regex_name: :alphanumeric,
@@ -49,7 +49,7 @@ defmodule Zxcvbn.ScoringTest do
     assert Scoring.regex_guesses(match) == :math.pow(2 * 26 + 10, 5), msg
   end
 
-  test 'regex guesses recent_year distant' do
+  test "regex guesses recent_year distant" do
     match = %{
       token: "1972",
       regex_name: :recent_year,
@@ -60,7 +60,7 @@ defmodule Zxcvbn.ScoringTest do
     assert Scoring.regex_guesses(match) == abs(Scoring.reference_year() - 1972), msg
   end
 
-  test 'regex guesses recent_year close' do
+  test "regex guesses recent_year close" do
     match = %{
       token: "2005",
       regex_name: :recent_year,
@@ -70,9 +70,10 @@ defmodule Zxcvbn.ScoringTest do
     msg = "guesses of MIN_YEAR_SPACE for a year close to REFERENCE_YEAR"
     result = Scoring.regex_guesses(match)
     expected = Scoring.min_year_space()
+    assert result == expected, msg
   end
 
-  test 'date guesses' do
+  test "date guesses" do
     match = %{
       token: "1123",
       separator: "",
@@ -88,7 +89,7 @@ defmodule Zxcvbn.ScoringTest do
     assert expected == result, msg
   end
 
-  test 'date with separator' do
+  test "date with separator" do
     match = %{
       token: "1/1/2010",
       separator: "/",
@@ -129,5 +130,13 @@ defmodule Zxcvbn.ScoringTest do
                "expected guess multiplier of #{word} is #{expected}, actual: #{actual} "
       end
     )
+  end
+
+  describe "start_upper/0" do
+    assert Scoring.start_upper() == ~r/^[A-Z][^A-Z]+$/
+  end
+
+  describe "all_upper/0" do
+    assert Scoring.all_upper() == ~r/^[^a-z]+$/
   end
 end

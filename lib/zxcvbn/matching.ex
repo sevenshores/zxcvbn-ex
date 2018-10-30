@@ -73,7 +73,7 @@ defmodule Zxcvbn.Matching do
   @doc """
   Omnimatch -- combine everything.
   """
-  def omnimatch(password) do
+  def omnimatch(_password) do
     # matches = []
     # matchers = [
     #   @dictionary_match
@@ -95,9 +95,11 @@ defmodule Zxcvbn.Matching do
   @doc """
   Dictionary match (common passwords, english, last names, etc).
   """
+  def dictionary_match(password, ranked_dictionaries \\ ranked_dictionaries())
+
   def dictionary_match("", _), do: []
 
-  def dictionary_match(password, ranked_dictionaries \\ @ranked_dictionaries) do
+  def dictionary_match(password, ranked_dictionaries) do
     password
     |> word_permutations
     |> Enum.flat_map(&dictionaries_matches(ranked_dictionaries, &1, []))
@@ -138,7 +140,7 @@ defmodule Zxcvbn.Matching do
     end
   end
 
-  def reverse_dictionary_match(password, ranked_dictionaries \\ @ranked_dictionaries) do
+  def reverse_dictionary_match(password, ranked_dictionaries \\ ranked_dictionaries()) do
     password
     |> String.reverse()
     |> dictionary_match(ranked_dictionaries)
@@ -159,7 +161,11 @@ defmodule Zxcvbn.Matching do
   @doc """
   Dictionary match with common l33t substitutions.
   """
-  def l33t_match(password, ranked_dictionaries \\ @ranked_dictionaries, l33t_table \\ @l33t_table) do
+  def l33t_match(
+        _password,
+        _ranked_dictionaries \\ ranked_dictionaries(),
+        _l33t_table \\ @l33t_table
+      ) do
     # matches = []
     # for sub in @enumerate_l33t_subs @relevant_l33t_subtable(password, _l33t_table)
     #   break if @empty sub # corner case: password has no relevant subs.
@@ -186,7 +192,7 @@ defmodule Zxcvbn.Matching do
   @doc """
   Spatial match (qwerty/dvorak/keypad).
   """
-  def spatial_match(password, graph \\ graphs()) do
+  def spatial_match(_password, _graph \\ graphs()) do
     # matches = []
     # for graph_name, graph of _graphs
     #   @extend matches, @spatial_match_helper(password, graph, graph_name)
@@ -260,7 +266,7 @@ defmodule Zxcvbn.Matching do
       [(i, j, delta), ...] = [(0, 3, 1), (5, 7, -2), (8, 9, 1)]
 
   """
-  def sequence_match(password) do
+  def sequence_match(_password) do
     # return [] if password.length == 1
 
     # update = (i, j, delta) =>
@@ -310,7 +316,7 @@ defmodule Zxcvbn.Matching do
   @doc """
   Regex matching.
   """
-  def regex_match(password, regexen \\ @regexen) do
+  def regex_match(_password, _regexen \\ @regexen) do
     # matches = []
     # for name, regex of _regexen
     #   regex.lastIndex = 0 # keeps regex_match stateless
@@ -348,7 +354,7 @@ defmodule Zxcvbn.Matching do
   this uses a `^...$` regex against every substring of the password -- less performant but leads
   to every possible date match.
   """
-  def date_matching(password) do
+  def date_matching(_password) do
     # matches = []
     # maybe_date_no_separator = /^\d{4,8}$/
     # maybe_date_with_separator = ///
@@ -444,7 +450,7 @@ defmodule Zxcvbn.Matching do
   # ----------------------------------------------------------------------------
 
   # makes a pruned copy of l33t_table that only includes password's possible substitutions
-  defp relevant_l33t_subtable(password, table) do
+  defp relevant_l33t_subtable(_password, _table) do
     # password_chars = {}
 
     # for chr in password.split('')
@@ -461,7 +467,7 @@ defmodule Zxcvbn.Matching do
   end
 
   # returns the list of possible 1337 replacement dictionaries for a given password
-  defp enumerate_l33t_subs(table) do
+  defp enumerate_l33t_subs(_table) do
     # keys = (k for k of table)
     # subs = [[]]
 
@@ -513,7 +519,7 @@ defmodule Zxcvbn.Matching do
     # sub_dicts
   end
 
-  defp spatial_match_helper(password, graph, graph_name) do
+  defp spatial_match_helper(_password, _graph, _graph_name) do
     # matches = []
     # i = 0
     # while i < password.length - 1
@@ -579,7 +585,7 @@ defmodule Zxcvbn.Matching do
   #   * 2 ints are over 31, the max allowable day
   #   * 2 ints are zero
   #   * all ints are over 12, the max allowable month
-  defp map_ints_to_dmy(ints) do
+  defp map_ints_to_dmy(_ints) do
     # return if ints[1] > 31 or ints[1] <= 0
     # over_12 = 0
     # over_31 = 0
@@ -624,7 +630,7 @@ defmodule Zxcvbn.Matching do
     #     }
   end
 
-  defp map_ints_to_dm(ints) do
+  defp map_ints_to_dm(_ints) do
     # for [d, m] in [ints, ints.slice().reverse()]
     #   if 1 <= d <= 31 and 1 <= m <= 12
     #     return {
@@ -649,7 +655,7 @@ defmodule Zxcvbn.Matching do
     end)
   end
 
-  defp build_ranked_dict(ordered_list) do
+  defp build_ranked_dict(_ordered_list) do
     # result = {}
     # i = 1 # rank starts at 1, not 0
     # for word in ordered_list
@@ -658,19 +664,19 @@ defmodule Zxcvbn.Matching do
     # result
   end
 
-  defp empty?(obj) do
+  defp empty?(_obj) do
     # (k for k of obj).length == 0
   end
 
-  defp extend(list1, list2) do
+  defp extend(_list1, _list2) do
     # lst.push.apply lst, lst2
   end
 
-  defp translate(string, chr_map) do
+  defp translate(_string, _chr_map) do
     # (chr_map[chr] or chr for chr in string.split('')).join('')
   end
 
-  defp mod(n, m) do
+  defp mod(_n, _m) do
     # ((n % m) + m) % m # mod impl that works for negative numbers
   end
 
