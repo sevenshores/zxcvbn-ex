@@ -103,6 +103,7 @@ defmodule Zxcvbn.Matching do
     password
     |> word_permutations
     |> Enum.flat_map(&dictionaries_matches(ranked_dictionaries, &1, []))
+    |> sorted
   end
 
   defp word_permutations(word) do
@@ -144,6 +145,7 @@ defmodule Zxcvbn.Matching do
     |> String.reverse()
     |> dictionary_match(ranked_dictionaries)
     |> Enum.map(&reverse_match(&1, String.length(password)))
+    |> sorted
   end
 
   defp reverse_match(match, length) do
@@ -678,10 +680,10 @@ defmodule Zxcvbn.Matching do
     # ((n % m) + m) % m # mod impl that works for negative numbers
   end
 
-  defp sorted(_matches) do
-    # # sort on i primary, j secondary
-    # matches.sort (m1, m2) ->
-    #   (m1.i - m2.i) or (m1.j - m2.j)
+  def sorted([]), do: []
+
+  def sorted(matches) do
+    matches |> Enum.sort(&(&1.i < &2.i or (&1.i == &2.i and &1.j < &2.j)))
   end
 
   defp frequency_lists, do: Zxcvbn.Data.FrequencyLists.all()

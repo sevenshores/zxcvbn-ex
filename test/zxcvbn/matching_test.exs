@@ -184,20 +184,6 @@ defmodule Zxcvbn.MatchingTest do
 
       expected = %{
         dict_match()
-        | i: 4,
-          j: 6,
-          rank: 4,
-          token: "456",
-          matched_word: "654",
-          dictionary_name: "d1",
-          reversed: true
-      }
-
-      {match, matches} = List.pop_at(matches, 0)
-      assert match == expected
-
-      expected = %{
-        expected
         | i: 1,
           j: 3,
           rank: 2,
@@ -207,8 +193,44 @@ defmodule Zxcvbn.MatchingTest do
           reversed: true
       }
 
+      {match, matches} = List.pop_at(matches, 0)
+      assert match == expected
+
+      expected = %{
+        expected
+        | i: 4,
+          j: 6,
+          rank: 4,
+          token: "456",
+          matched_word: "654",
+          dictionary_name: "d1",
+          reversed: true
+      }
+
       {match, _} = List.pop_at(matches, 0)
       assert match == expected
+    end
+  end
+
+  describe "sorted/1" do
+    test "sorting an empty list leaves it empty" do
+      assert Matching.sorted([]) == []
+    end
+
+    test "sorts matches on i & j" do
+      unsorted = [
+        %{name: "m1", i: 5, j: 5},
+        %{name: "m2", i: 6, j: 7},
+        %{name: "m3", i: 2, j: 5},
+        %{name: "m4", i: 0, j: 0},
+        %{name: "m5", i: 2, j: 3},
+        %{name: "m6", i: 0, j: 3}
+      ]
+
+      sorted_names = ["m4", "m6", "m5", "m3", "m1", "m2"]
+
+      sorted = Matching.sorted(unsorted)
+      assert Enum.map(sorted, & &1.name) == sorted_names
     end
   end
 
